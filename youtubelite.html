@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+</head>
+
+<body>
+    <h1>YouTube Lite</h1>
+    <input id="search_q" placeholder="search">
+    <button type="button" onclick="getResults()">Search</button>
+
+    <div id="results">
+    </div>
+
+    <script>
+        /**
+         * searchForMinecraftVideos - searches YouTube for Minecraft videos
+         *
+         * @param   {String}  apiKey  The YouTube API key
+         *
+         * @return  {undefined}
+         */
+        function getResults() {
+
+            // Create a new URL object
+            const url = new URL('https://www.googleapis.com/youtube/v3/search');
+
+            const apiKey = 'INSERT_YOUR_API_KEY_HERE!'
+            const search = document.getElementById('search_q').value;
+
+            // Set the parameters to search for
+            let params = {
+                part: 'snippet', // Specifies what info is returned
+                q: search, // The search term
+                key: apiKey, // The YouTube API key
+                type: 'video', // Specifies to only return videos
+                maxResults: 10,
+            };
+
+            // Append each parameter to the URL
+            Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
+
+            // Fetch the URL and parse the response as JSON
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    // For each item returned, log the video URL to the console
+                    document.getElementById("results").innerHTML = ''
+                    data.items.forEach(item => {
+                        document.getElementById("results").innerHTML += `${item.snippet.title} <br>`
+                        document.getElementById("results").innerHTML += `https://www.youtube.com/watch?v=${item.id.videoId} <br>`;
+                        document.getElementById("results").innerHTML += `${item.snippet.channelTitle} <br> <br>`;
+                    });
+                });
+        }
+    </script>
+</body>
+
+</html>
